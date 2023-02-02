@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import Modal from 'react-modal';
 import imgtest from '../img/shopping-cart/car1.png';
 import { Link } from 'react-router-dom';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 //librerias para paypal
 
 
@@ -27,7 +28,8 @@ const Clscarrito = () => {
     const [var_SubTotal, setSubTotal] = useState([]);
     const [var_totalpaypal, setTotalpaypal] = useState("");
     const [var_Iva, setIva] = useState([]);
-    const [v1, SetDatavar] = useState([])
+    const [v1, SetDatavar] = useState([]);
+    const [valor_papal, val_paypal] = useState(0);
     var var_ubic = ""
     const [var_confirubi, setConfirmUb] = useState("");
     const [ped_entrega, UsuPedEntrega] = useState("Retiro en sucursales")
@@ -37,64 +39,38 @@ const Clscarrito = () => {
     let totalprod2 = 0
     var totalpay = 0
 
+    const onApprove = () => {
 
-    const PayPalButton = window.paypal.Buttons.driver("react", { React, ReactDOM });
+        if (ped_entrega === "Retiro en sucursales") {
+            var_ubic = "SECTOR SUR CAUPICHO Av. Leonidas dubles - frente a la iglesia de caupicho / SECTOR NORTE PUSUQUI Av. Manuel Córdova Galarza - pusuqui, las 4 esquinas , Quito, Ecuador"
+        }
+        if (ped_entrega === "Entrega a domicilio") {
+            var_ubic = String(var_confirubi)
+        }
 
-    const createOrder = (data, actions) => {
+        let Iva = totalprod2 * 0.12
+        let Total = totalprod2 + Iva
 
-        return actions.order.create({
-            purchase_units: [
-                {
-                    amount: {
-                        value: totalpay
-                        //var_totalpaypal
-                    },
-                },
-            ],
-        });
-    }
+        setSubTotal(Total.toFixed(2))
+        setIva(Iva.toFixed(2))
+        setTotalpaypal(totalprod2 + Iva.toFixed(2))
 
-    const onApprove = (data, actions) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                PedTotal: Total.toFixed(2),
+                PedIva: Iva.toFixed(2),
+                PedEntrega: ped_entrega,
+                PedUbic: var_ubic,
+                PedSubTotal: totalprod2.toFixed(2)
+            })
+        };
+        fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid, requestOptions)
+            .then((response) => response.json())
+            .then((data) => alert(data), regis());
 
-        return actions.order.capture().then(function (detalles) {
-
-            if (detalles['status'] == "COMPLETED") {
-
-                if (ped_entrega === "Retiro en sucursales") {
-                    var_ubic = "SECTOR SUR CAUPICHO Av. Leonidas dubles - frente a la iglesia de caupicho / SECTOR NORTE PUSUQUI Av. Manuel Córdova Galarza - pusuqui, las 4 esquinas , Quito, Ecuador"
-                }
-                if (ped_entrega === "Entrega a domicilio") {
-                    var_ubic = String(var_confirubi)
-                }
-
-                let Iva = totalprod2 * 0.12
-                let Total = totalprod2 + Iva
-
-                setSubTotal(Total.toFixed(2))
-                setIva(Iva.toFixed(2))
-                setTotalpaypal(totalprod2 + Iva.toFixed(2))
-
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        PedTotal: Total.toFixed(2),
-                        PedIva: Iva.toFixed(2),
-                        PedEntrega: ped_entrega,
-                        PedUbic: var_ubic,
-                        PedSubTotal: totalprod2.toFixed(2)
-                    })
-                };
-                fetch("http://localhost:4000/apiclicarrito/" + item_valueid, requestOptions)
-                    .then((response) => response.json())
-                    .then((data) => alert(data), regis());
-
-                openModal()
-            } else
-                alert("PROBLEMAS EN EL PAGO")
-
-        });
-
+        openModal()
     }
 
     const customStyles = {
@@ -131,12 +107,12 @@ const Clscarrito = () => {
 
     const regis = async () => {
 
-        const resp = await fetch("http://localhost:4000/apiclicarrito/" + item_valueid);
+        const resp = await fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid);
         const data1 = await resp.json();
         setData(data1);
 
 
-        const resp_usu = await fetch("http://localhost:4000/apiusumicuenta/" + item_valueid);
+        const resp_usu = await fetch("http://192.168.100.7:4000/apiusumicuenta/" + item_valueid);
         const data2 = await resp_usu.json();
 
         setConfirmUb(data2[0].UsuDireccion)
@@ -157,6 +133,17 @@ const Clscarrito = () => {
 
     const sumtotal = () => {
         totalprod2 = totalprod2 + totalprod
+        let tot = 0
+        tot = totalprod2
+
+        /*let Iva = totalprod2 * 0.12
+        let Total = totalprod2 + Iva
+
+        setSubTotal(Total.toFixed(2))
+        setIva(Iva.toFixed(2))
+        setTotalpaypal(totalprod2 + Iva.toFixed(2))
+
+        val_paypal(tot)*/
         //setTotal(100)
     }
 
@@ -171,7 +158,7 @@ const Clscarrito = () => {
                 headers: { 'Content-Type': 'application/json' }
             };
 
-            fetch("http://localhost:4000/apiclicarrito/" + item_valueid + "/" + producto, requestOptions)
+            fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid + "/" + producto, requestOptions)
                 .then((response) => response.json())
                 .then((data) => window.location.href = "/Carrito", regis());
         }
@@ -213,7 +200,7 @@ const Clscarrito = () => {
                     let var_pago = ""
 
                     /*const { data } = await axios.delete(
-                        "http://localhost:4000/apiclicarrito/",
+                        "http://192.168.100.7:4000/apiclicarrito/",
                         {
                           id: "pm_1LjuTHCIHv9lbd1ZEpna7tI1",
                           amount: 100000 //10000, //cents
@@ -230,7 +217,7 @@ const Clscarrito = () => {
                         })
                     };
 
-                    const a = await (fetch("http://localhost:4000/apiclicarrito", requestOptions))
+                    const a = await (fetch("http://192.168.100.7:4000/apiclicarrito", requestOptions))
 
                     let actualData = await a.json();
                     let Iva = totalprod2 * 0.12
@@ -253,7 +240,7 @@ const Clscarrito = () => {
                                 PedSubTotal: totalprod2.toFixed(2)
                             })
                         };
-                        fetch("http://localhost:4000/apiclicarrito/" + item_valueid, requestOptions)
+                        fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid, requestOptions)
                             .then((response) => response.json())
                             .then((data) => alert(data), regis());
 
@@ -360,7 +347,7 @@ const Clscarrito = () => {
                                                     <tr>
                                                         <td class="product__cart__item">
                                                             <div class="product__cart__item__pic">
-                                                                <a href={"/CliProducto/" + filname2.Pro_id + "/" + item_valueid}><img src={'http://localhost:4000/capuchino/' + filname2.ProImagen} style={{ width: 100 }} /></a>
+                                                                <a href={"/CliProducto/" + filname2.Pro_id + "/" + item_valueid}><img src={'http://192.168.100.7:4000/capuchino/' + filname2.ProImagen} style={{ width: 100 }} /></a>
                                                             </div>
                                                             <div class="product__cart__item__text">
                                                                 <h6 id="nom_producto">{filname2.ProNombre}</h6>
@@ -416,28 +403,82 @@ const Clscarrito = () => {
 
 
                                 </ul>
-                                <div class="pay_pal">
-                                    <PayPalButton
-                                        createOrder={(data, actions) => createOrder(data, actions)}
-                                        onApprove={(data, actions) => onApprove(data, actions)}
-                                    />
+                                <div>
+
                                 </div>
+
+
                                 <Elements stripe={stripePromise}>
-                                    <h6>PROCEDER A PAGAR CON STRIPE:</h6>
-
-
-
-                                    <>Por favor ingrese los datos de su tarjeta de crédito o de débito.</>
+                                    <h6>PROCEDER A PAGAR:</h6>
+                                    <br />
+                                    <h6>Escoja su método de pago:</h6>
+                                    <br />
+                                    <h2 class="metodo_pago">Stripe:</h2>           
                                     <Elements stripe={stripePromise}>
-
                                         <CheckoutForm />
-                                        {/*<button href="/Cliente" class="primary-btn" id="btn_pagar" onClick={() => pros_pago()}>Proceder a pagar</button>
-                                        */}
-
-
-
                                     </Elements>
                                 </Elements>
+                                <br />                
+                                <h2 class="metodo_pago">PayPal:</h2>     
+                                <div>
+                                    <input style={{ display: "none" }} type="text" id="pay_pal_val" value={totalpay} />
+                                    <PayPalScriptProvider deferLoading={false} options={{ "client-id": "test" }}>
+                                        <PayPalButtons
+                                            createOrder={(data, actions) => {
+                                                return actions.order.create({
+                                                    purchase_units: [
+                                                        {
+                                                            amount: {
+                                                                value: document.getElementById("pay_pal_val").value
+                                                            },
+                                                        },
+                                                    ],
+                                                });
+                                            }}
+                                            onApprove={(data, actions) => {
+                                                return actions.order.capture().then((details) => {
+
+                                                    return actions.order.capture().then(function (detalles) {
+
+                                                        if (detalles['status'] == "COMPLETED") {
+                                                            if (ped_entrega === "Retiro en sucursales") {
+                                                                var_ubic = "SECTOR SUR CAUPICHO Av. Leonidas dubles - frente a la iglesia de caupicho / SECTOR NORTE PUSUQUI Av. Manuel Córdova Galarza - pusuqui, las 4 esquinas , Quito, Ecuador"
+                                                            }
+                                                            if (ped_entrega === "Entrega a domicilio") {
+                                                                var_ubic = String(var_confirubi)
+                                                            }
+
+                                                            let Iva = totalprod2 * 0.12
+                                                            let Total = totalprod2 + Iva
+
+                                                            setSubTotal(Total.toFixed(2))
+                                                            setIva(Iva.toFixed(2))
+                                                            setTotalpaypal(totalprod2 + Iva.toFixed(2))
+
+                                                            const requestOptions = {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({
+                                                                    PedTotal: Total.toFixed(2),
+                                                                    PedIva: Iva.toFixed(2),
+                                                                    PedEntrega: ped_entrega,
+                                                                    PedUbic: var_ubic,
+                                                                    PedSubTotal: totalprod2.toFixed(2)
+                                                                })
+                                                            };
+                                                            fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid, requestOptions)
+                                                                .then((response) => response.json())
+                                                                .then((data) => alert(data), regis());
+                                                            openModal()
+                                                        } else
+                                                            alert("PROBLEMAS EN EL PAGO")
+
+                                                    });
+                                                });
+                                            }}
+                                        />
+                                    </PayPalScriptProvider>
+                                </div>
                             </div>
                         </div>
                     </div>
