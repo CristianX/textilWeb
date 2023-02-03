@@ -66,7 +66,7 @@ const Clscarrito = () => {
                 PedSubTotal: totalprod2.toFixed(2)
             })
         };
-        fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid, requestOptions)
+        fetch("http://localhost:4000/apiclicarrito/" + item_valueid, requestOptions)
             .then((response) => response.json())
             .then((data) => alert(data), regis());
 
@@ -107,12 +107,12 @@ const Clscarrito = () => {
 
     const regis = async () => {
 
-        const resp = await fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid);
+        const resp = await fetch("http://localhost:4000/apiclicarrito/" + item_valueid);
         const data1 = await resp.json();
         setData(data1);
 
 
-        const resp_usu = await fetch("http://192.168.100.7:4000/apiusumicuenta/" + item_valueid);
+        const resp_usu = await fetch("http://localhost:4000/apiusumicuenta/" + item_valueid);
         const data2 = await resp_usu.json();
 
         setConfirmUb(data2[0].UsuDireccion)
@@ -158,7 +158,7 @@ const Clscarrito = () => {
                 headers: { 'Content-Type': 'application/json' }
             };
 
-            fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid + "/" + producto, requestOptions)
+            fetch("http://localhost:4000/apiclicarrito/" + item_valueid + "/" + producto, requestOptions)
                 .then((response) => response.json())
                 .then((data) => window.location.href = "/Carrito", regis());
         }
@@ -200,7 +200,7 @@ const Clscarrito = () => {
                     let var_pago = ""
 
                     /*const { data } = await axios.delete(
-                        "http://192.168.100.7:4000/apiclicarrito/",
+                        "http://localhost:4000/apiclicarrito/",
                         {
                           id: "pm_1LjuTHCIHv9lbd1ZEpna7tI1",
                           amount: 100000 //10000, //cents
@@ -217,7 +217,7 @@ const Clscarrito = () => {
                         })
                     };
 
-                    const a = await (fetch("http://192.168.100.7:4000/apiclicarrito", requestOptions))
+                    const a = await (fetch("http://localhost:4000/apiclicarrito", requestOptions))
 
                     let actualData = await a.json();
                     let Iva = totalprod2 * 0.12
@@ -240,7 +240,7 @@ const Clscarrito = () => {
                                 PedSubTotal: totalprod2.toFixed(2)
                             })
                         };
-                        fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid, requestOptions)
+                        fetch("http://localhost:4000/apiclicarrito/" + item_valueid, requestOptions)
                             .then((response) => response.json())
                             .then((data) => alert(data), regis());
 
@@ -347,7 +347,7 @@ const Clscarrito = () => {
                                                     <tr>
                                                         <td class="product__cart__item">
                                                             <div class="product__cart__item__pic">
-                                                                <a href={"/CliProducto/" + filname2.Pro_id + "/" + item_valueid}><img src={'http://192.168.100.7:4000/capuchino/' + filname2.ProImagen} style={{ width: 100 }} /></a>
+                                                                <a href={"/CliProducto/" + filname2.Pro_id + "/" + item_valueid}><img src={'http://localhost:4000/capuchino/' + filname2.ProImagen} style={{ width: 100 }} /></a>
                                                             </div>
                                                             <div class="product__cart__item__text">
                                                                 <h6 id="nom_producto">{filname2.ProNombre}</h6>
@@ -466,7 +466,7 @@ const Clscarrito = () => {
                                                                     PedSubTotal: totalprod2.toFixed(2)
                                                                 })
                                                             };
-                                                            fetch("http://192.168.100.7:4000/apiclicarrito/" + item_valueid, requestOptions)
+                                                            fetch("http://localhost:4000/apiclicarrito/" + item_valueid, requestOptions)
                                                                 .then((response) => response.json())
                                                                 .then((data) => alert(data), regis());
                                                             openModal()

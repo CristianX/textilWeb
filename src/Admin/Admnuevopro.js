@@ -480,6 +480,7 @@ const Admnuevopro = () => {
             let fd = new FormData();
             fd.append('file', selectedFile)
             fd.append('name', document.getElementById("pro_nombre").value)
+            console.log("La data de fd", fd);
 
             axios.post("http://localhost:4000/capuchino", fd, config)
                 .then((response) => console.log(response.data)
