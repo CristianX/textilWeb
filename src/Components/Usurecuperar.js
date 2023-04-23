@@ -49,22 +49,19 @@ const Usurecuperar = () => {
 
     const Confir = async () => {
 
-        const var_codigo = document.getElementById("user_cod").value
+        const var_codigo = document.getElementById("user_cod").value;
+        const user_email = document.getElementById("email_user").value;
 
-        if (var_codigo === " ") {
+        if (!var_codigo) {
             UsuMen2("Por favor, ingrese el código de seguridad.")
             formularioValido3 = false
-        }
-        else {
-            if (!var_codigo) {
-                UsuMen2("Por favor, ingrese el código de seguridad.")
-                formularioValido2 = false
-            }
-            else {
+        } else if(!user_email) {
+            UsuMen2("Por favor, ingrese el código de seguridad.")
+            formularioValido3 = false
+        }else {
                 UsuMen2("")
                 formularioValido2 = true
                 formularioValido3 = true
-            }
         }
 
         if (formularioValido2 === true &&  formularioValido3 === true) {
@@ -90,8 +87,9 @@ const Usurecuperar = () => {
 
     const Update = () => {
         
-        pas = document.getElementById("user_pass").value
-        pas2 = document.getElementById("user_pass2").value
+        pas = document.getElementById("user_pass").value;
+        pas2 = document.getElementById("user_pass2").value;
+        var user_email = document.getElementById("email_user").value;
 
         ///////////////////CAMPOS CON ESPACIO y VACIOS /////////////////
         if (pas2 === " ") {
@@ -136,14 +134,11 @@ const Usurecuperar = () => {
                 formularioValido12 === true) {
     
                 const requestOptions = {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        UsuPassword: document.getElementById("user_pass").value
-                    })
                 };
 
-                fetch("http://localhost:4000/apirecuperar/" + var_item_valueid, requestOptions)
+                fetch("http://localhost:4000/apirecuperar/newpass/" + user_email + "/" + pas, requestOptions)
                     .then((response) => response.json())
                     .then((data) => redireccion_inicio());
     
@@ -187,7 +182,15 @@ const Usurecuperar = () => {
 
                         <div class="row">
                             <div class="col-lg-8 col-md-6">
-                                <h6 class="checkout__title">Confirmación de Código de seguridad</h6>
+                                <h6 class="checkout__title">Ingrese su correo y código de seguridad</h6>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="checkout__input">
+                                            <p>Correo:<span> {mensaje2}</span></p>
+                                            <input type="email" id="email_user" placeholder="Ingrese el correo electrónico registrado" defaultValue={""}/>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="checkout__input">
