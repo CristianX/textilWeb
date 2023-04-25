@@ -66,12 +66,12 @@ const Usurecuperar = () => {
 
         if (formularioValido2 === true &&  formularioValido3 === true) {
 
-            const resp = await fetch("http://localhost:4000/apirecuperar/" + var_codigo);
-        const data1 = await resp.json();
+            const resp = await fetch(`http://localhost:4000/apirecuperar/codigo-recuperacion/${ user_email }/${ var_codigo }`);
+            const data1 = await resp.json();
 
-        //console.log(data1)
+        console.log(data1);
 
-        if(data1 == "Error en la API: /usuario"){
+        if(data1 == "Código erróneo"){
             alert("Código incorrecto")
             display("none")
         }else{
@@ -140,7 +140,10 @@ const Usurecuperar = () => {
 
                 fetch("http://localhost:4000/apirecuperar/newpass/" + user_email + "/" + pas, requestOptions)
                     .then((response) => response.json())
-                    .then((data) => redireccion_inicio());
+                    .then((data) => {
+                        redireccion_inicio();
+                        alert("Contraseña actualizada correctamente")
+                    });
     
             }
             else {
