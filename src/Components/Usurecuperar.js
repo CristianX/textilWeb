@@ -69,8 +69,6 @@ const Usurecuperar = () => {
             const resp = await fetch(`http://localhost:4000/apirecuperar/codigo-recuperacion/${ user_email }/${ var_codigo }`);
             const data1 = await resp.json();
 
-        console.log(data1);
-
         if(data1 == "Código erróneo"){
             alert("Código incorrecto")
             display("none")
