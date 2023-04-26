@@ -17,6 +17,7 @@ const Usurecuperar = () => {
     const [mensaje2, UsuMen2] = useState("")
     const [mensaje4, UsuMen4] = useState("")
     const [mensaje6, UsuMen6] = useState("")
+    const [mensaje8, UsuMen8] = useState("")
 
     ///VARIABLES PARA VALIDAR CAMPOS VACÍOS
     let formularioValido2 = 0
@@ -52,14 +53,19 @@ const Usurecuperar = () => {
         const var_codigo = document.getElementById("user_cod").value;
         const user_email = document.getElementById("email_user").value;
 
-        if (!var_codigo) {
-            UsuMen2("Por favor, ingrese el código de seguridad.")
-            formularioValido3 = false
-        } else if(!user_email) {
-            UsuMen2("Por favor, ingrese el código de seguridad.")
-            formularioValido3 = false
-        }else {
+        if (!var_codigo || !user_email) {
+
+            if(!var_codigo) {
+                UsuMen2("Por favor, ingrese el código de seguridad.");
+                formularioValido3 = false;
+            }
+            if(!user_email) {
+                UsuMen8("Por favor, ingrese el email.")
+                formularioValido3 = false
+            }
+        } else {
                 UsuMen2("")
+                UsuMen8("")
                 formularioValido2 = true
                 formularioValido3 = true
         }
@@ -69,7 +75,12 @@ const Usurecuperar = () => {
             const resp = await fetch(`http://localhost:4000/apirecuperar/codigo-recuperacion/${ user_email }/${ var_codigo }`);
             const data1 = await resp.json();
 
-        if(data1 == "Código erróneo"){
+            console.log('Respuesta de correo erróneo', data1);
+
+        if(data1.status === 400) {
+            alert("Correo no registrado");
+            display("none");
+        } else if(data1 === "Código erróneo"){
             alert("Código incorrecto")
             display("none")
         }else{
@@ -187,7 +198,7 @@ const Usurecuperar = () => {
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="checkout__input">
-                                            <p>Correo:<span> {mensaje2}</span></p>
+                                            <p>Correo:<span> {mensaje8}</span></p>
                                             <input type="email" id="email_user" placeholder="Ingrese el correo electrónico registrado" defaultValue={""}/>
                                         </div>
                                     </div>
