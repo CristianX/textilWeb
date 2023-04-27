@@ -7,6 +7,7 @@ const Usrlogin = () => {
     const [var_pass, UsevarPass] = useState("")
     const [var_rol, Usevarol] = useState("Cliente")
     const [other, UsuOther] = useState([])
+    const recaptchaRef = React.createRef();
 
     var cor = ""
     var con = ""
@@ -23,8 +24,8 @@ const Usrlogin = () => {
     //const [datarecaptcha, SetDataRecap] = useState([])
     const [datarecaptcha, SetDataRecap] = useState(true)
 
-    const onChange = () => {
-        SetDataRecap(true)
+    const onChange = (value) => {
+        SetDataRecap(true);
     }
 
     const restring = () => {
@@ -80,7 +81,7 @@ const Usrlogin = () => {
 
             }
 
-            if (formularioValido && formularioValido2 && formularioValido3) {
+            if (formularioValido && formularioValido2 && formularioValido3 && recaptchaRef.current.getValue()) {
                 
 
                 const resp = await fetch("http://localhost:4000/apiregistro/" + var_correo + "/" + var_pass + "/pc");
@@ -105,7 +106,7 @@ const Usrlogin = () => {
                 }
             }
             else {
-                alert("Por favor ingrese los campos requeridos")
+                alert("Por favor ingrese los campos requeridos");
             }
 
         }
@@ -148,8 +149,6 @@ const Usrlogin = () => {
             }
         }
 
-
-       
 
         if (formularioValido && formularioValido3) {
 
@@ -214,6 +213,7 @@ const Usrlogin = () => {
                                     <ReCAPTCHA
                                         sitekey="6LeCwfwhAAAAAMk1l0OghSp5Y7BhxyTbpn7FWTlj"
                                         onChange={onChange}
+                                        ref={recaptchaRef}
                                     />
 
                                 </div> <br></br>
